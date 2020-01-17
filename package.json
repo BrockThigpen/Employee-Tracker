@@ -2,7 +2,7 @@
   "name": "employee-tracker",
   "version": "1.0.0",
   "description": "terminal based employee tracking system",
-  "main": "employee_tracker.js",
+  "main": "server.js",
   "dependencies": {
     "console.table": "^0.10.0",
     "express": "^4.17.1",

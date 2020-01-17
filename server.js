@@ -1,6 +1,7 @@
 // dependencies
 let mysql = require("mysql");
 let inquirer = require("inquirer");
+const cTable = require('console.table');
 
 // establish connection
 var connection = mysql.createConnection({
@@ -13,9 +14,9 @@ var connection = mysql.createConnection({
 
 connection.connect(function (err) {
     if (err) throw err;
-    start();
+    // start();
 });
 
-const start = () => {
+// const start = () => {
     
-}
+// }
