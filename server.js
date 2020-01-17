@@ -31,14 +31,14 @@ const start = () => {
                 viewEmployeesByDepartment();
             } else if (choice.main === 'View All Employees By Roles') {
                 viewEmployeesByRole();
-            } else if (choice.main === 'View All Departments'){
+            } else if (choice.main === 'View All Departments') {
                 viewAllDepartments();
-            } else if (choice.main === 'View All Roles'){
+            } else if (choice.main === 'View All Roles') {
                 viewAllRoles();
-            }else if (choice.main === 'Add Employee') {
+            } else if (choice.main === 'Add Employee') {
                 addEmployee();
             } else if (choice.main === 'Add Department') {
-
+                addDepartment();
             } else if (choice.main === 'Add Role') {
 
             } else if (choice.main === 'Update Employee Roles') {
@@ -81,7 +81,7 @@ const viewEmployeesByDepartment = () => {
                 query += 'WHERE ? ORDER BY e.id';
                 connection.query(query,
                     {
-                    name: choice.eByD
+                        name: choice.eByD
                     },
                     (err, res) => {
                         if (err) throw err;
@@ -93,7 +93,7 @@ const viewEmployeesByDepartment = () => {
 }
 const viewEmployeesByRole = () => {
     connection.query('SELECT title FROM role', (err, res) => {
-        let arr=[];
+        let arr = [];
         res.forEach(i => arr.push(i.title));
         if (err) throw err;
         inquirer.prompt({
@@ -110,7 +110,7 @@ const viewEmployeesByRole = () => {
                 query += 'WHERE ? ORDER BY e.id';
                 connection.query(query,
                     {
-                    title: choice.eByR
+                        title: choice.eByR
                     },
                     (err, res) => {
                         if (err) throw err;
@@ -120,95 +120,112 @@ const viewEmployeesByRole = () => {
             })
     })
 }
-const viewAllDepartments = () =>{
+const viewAllDepartments = () => {
     connection.query('SELECT name AS Department FROM department',
-    (err, res) => {
-        if (err) throw err;
-        console.table(res);
-        start();
-    })
-}
-const viewAllRoles = () =>{
-    connection.query('SELECT title AS Role, salary AS Salary FROM role',
-    (err, res) => {
-        if (err) throw err;
-        console.table(res);
-        start();
-    })
-}
-const addEmployee = () =>{
-    let roles=[];
-    let mgrs=['null'];
-    connection.query('SELECT title FROM role',
-    (err, res) => {
-        if (err) throw err;
-        res.forEach(i => roles.push(i.title));
-    });
-    connection.query('SELECT first_name, last_name FROM employee',
-    (err, res) => {
-        if (err) throw err;
-        res.forEach(i => {
-            let mgr = i.first_name.concat(' ', i.last_name)
-            mgrs.push(mgr)
-        })
-    });
-    inquirer.prompt([
-    {
-        name:'firstName',
-        type: 'input',
-        message: "What is the employee's first name?"
-    },
-    {
-        name:'lastName',
-        type: 'input',
-        message: "What is the emplyee's last name?"
-    },
-    {
-        name: 'role',
-        type: 'list',
-        message: "What is the employee's role?",
-        choices: roles
-    },
-    {
-        name: 'mgr',
-        type: 'list',
-        message: "Who is this employee's manager?",
-        choices: mgrs
-    }])
-    .then(ans => {
-        connection.query('SELECT id FROM role WHERE ?',
-        {
-        title: ans.role
-        }, 
         (err, res) => {
             if (err) throw err;
-            let roleId = res[0].id;
-            let mgr = ans.mgr.split(' ');
-            connection.query('SELECT id FROM employee WHERE ? AND ?',
-            [{
-                first_name: mgr[0]
-            },
-            {
-                last_name: mgr[1]
-            }],
-            (err, res) => {
-                if (err) throw err;
-                let mgrId = res[0].id;
-
-                connection.query('INSERT INTO employee SET ?',
+            console.table(res);
+            start();
+        })
+}
+const viewAllRoles = () => {
+    connection.query('SELECT title AS Role, salary AS Salary FROM role',
+        (err, res) => {
+            if (err) throw err;
+            console.table(res);
+            start();
+        })
+}
+const addEmployee = () => {
+    let roles = [];
+    let mgrs = ['null'];
+    connection.query('SELECT title FROM role',
+        (err, res) => {
+            if (err) throw err;
+            res.forEach(i => roles.push(i.title));
+        });
+    connection.query('SELECT first_name, last_name FROM employee',
+        (err, res) => {
+            if (err) throw err;
+            res.forEach(i => {
+                let mgr = i.first_name.concat(' ', i.last_name)
+                mgrs.push(mgr)
+            })
+        });
+    inquirer.prompt([
+        {
+            name: 'firstName',
+            type: 'input',
+            message: "What is the employee's first name?"
+        },
+        {
+            name: 'lastName',
+            type: 'input',
+            message: "What is the emplyee's last name?"
+        },
+        {
+            name: 'role',
+            type: 'list',
+            message: "What is the employee's role?",
+            choices: roles
+        },
+        {
+            name: 'mgr',
+            type: 'list',
+            message: "Who is this employee's manager?",
+            choices: mgrs
+        }])
+        .then(ans => {
+            connection.query('SELECT id FROM role WHERE ?',
                 {
-                    first_name: ans.firstName,
-                    last_name: ans.lastName,
-                    role_id: roleId,
-                    manager_id: mgrId
+                    title: ans.role
                 },
                 (err, res) => {
                     if (err) throw err;
-                    start();
+                    let roleId = res[0].id;
+                    let mgr = ans.mgr.split(' ');
+                    connection.query('SELECT id FROM employee WHERE ? AND ?',
+                        [{
+                            first_name: mgr[0]
+                        },
+                        {
+                            last_name: mgr[1]
+                        }],
+                        (err, res) => {
+                            if (err) throw err;
+                            let mgrId = res[0].id;
+
+                            connection.query('INSERT INTO employee SET ?',
+                                {
+                                    first_name: ans.firstName,
+                                    last_name: ans.lastName,
+                                    role_id: roleId,
+                                    manager_id: mgrId
+                                },
+                                (err, res) => {
+                                    if (err) throw err;
+                                    start();
+                                })
+                        })
+
                 })
-            })
 
         })
-        
+}
+const addDepartment = () => {
+    inquirer.prompt({
+        name: 'nDep',
+        type: 'input',
+        message: 'What is the name of the new department?'
+    })
+    .then(ans => {
+        connection.query('INSERT INTO department SET ?',
+        {
+            name: ans.nDep
+        },
+        (err, res) => {
+            if (err) throw err;
+            start();
+        })
     })
 }
