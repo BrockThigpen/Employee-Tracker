@@ -2,7 +2,6 @@
 let mysql = require("mysql");
 let inquirer = require("inquirer");
 const cTable = require('console.table');
-
 // establish connection
 var connection = mysql.createConnection({
     host: "localhost",
@@ -11,20 +10,19 @@ var connection = mysql.createConnection({
     password: "BThigpen*8149",
     database: "emlployee_tracker_db"
 });
-
 connection.connect(function (err) {
     if (err) throw err;
     console.log("Connected as id " + connection.threadId);
     start();
 });
-
+// main prompt
 const start = () => {
     inquirer
         .prompt({
             name: 'main',
             type: 'list',
             message: 'What would you like to do?',
-            choices: ['View All Employees', 'View All Employees By Department', 'View All Employees By Roles', 'Add Employee', 'Add Department', 'Add Role', 'Update Employee Roles', 'Quit']
+            choices: ['View All Employees', 'View All Employees By Department', 'View All Employees By Roles', 'View All Departments', 'View All Roles', 'Add Employee', 'Add Department', 'Add Role', 'Update Employee Roles', 'Quit']
         })
         .then(choice => {
             if (choice.main === 'View All Employees') {
@@ -33,8 +31,12 @@ const start = () => {
                 viewEmployeesByDepartment();
             } else if (choice.main === 'View All Employees By Roles') {
                 viewEmployeesByRole();
-            } else if (choice.main === 'Add Employee') {
-
+            } else if (choice.main === 'View All Departments'){
+                viewAllDepartments();
+            } else if (choice.main === 'View All Roles'){
+                viewAllRoles();
+            }else if (choice.main === 'Add Employee') {
+                addEmployee();
             } else if (choice.main === 'Add Department') {
 
             } else if (choice.main === 'Add Role') {
@@ -46,7 +48,7 @@ const start = () => {
             }
         })
 }
-
+// queries
 const viewAllEmployees = () => {
     console.log('\n');
     let query = 'SELECT e.id AS ID, e.first_name AS First_Name, e.last_name AS Last_Name, r.title AS Role, d.name AS Department, r.salary AS Salary, CONCAT(m.first_name, " ", m.last_name) AS Manager FROM employee e ';
@@ -62,7 +64,6 @@ const viewAllEmployees = () => {
             start();
         })
 };
-
 const viewEmployeesByDepartment = () => {
     connection.query('SELECT * FROM department', (err, res) => {
         console.log(res);
@@ -116,4 +117,23 @@ const viewEmployeesByRole = () => {
                     })
             })
     })
+}
+const viewAllDepartments = () =>{
+    connection.query('SELECT name AS Department FROM department',
+    (err, res) => {
+        if (err) throw err;
+        console.table(res);
+        start();
+    })
+}
+const viewAllRoles = () =>{
+    connection.query('SELECT title AS Role, salary AS Salary FROM role',
+    (err, res) => {
+        if (err) throw err;
+        console.table(res);
+        start();
+    })
+}
+const addEmployee = () =>{
+
 }
