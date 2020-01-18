@@ -1,3 +1,9 @@
+//finish update function
+// fix add employye func
+// text
+
+
+
 // dependencies
 let mysql = require("mysql");
 let inquirer = require("inquirer");
@@ -40,7 +46,7 @@ const start = () => {
             } else if (choice.main === 'Add Department') {
                 addDepartment();
             } else if (choice.main === 'Add Role') {
-
+                addRole();
             } else if (choice.main === 'Update Employee Roles') {
 
             } else if (choice.main === 'Quit') {
@@ -138,7 +144,7 @@ const viewAllRoles = () => {
 }
 const addEmployee = () => {
     let roles = [];
-    let mgrs = ['null'];
+    let mgrs = ['No Manager'];
     connection.query('SELECT title FROM role',
         (err, res) => {
             if (err) throw err;
@@ -184,6 +190,7 @@ const addEmployee = () => {
                     if (err) throw err;
                     let roleId = res[0].id;
                     let mgr = ans.mgr.split(' ');
+                    let mgrId;
                     connection.query('SELECT id FROM employee WHERE ? AND ?',
                         [{
                             first_name: mgr[0]
@@ -192,9 +199,13 @@ const addEmployee = () => {
                             last_name: mgr[1]
                         }],
                         (err, res) => {
+                            console.log(res);
                             if (err) throw err;
-                            let mgrId = res[0].id;
-
+                            if (ans.mgr == 'No Manager') {
+                                mgrId = null;
+                            } else {
+                                mgrId = res[0].id;
+                            }
                             connection.query('INSERT INTO employee SET ?',
                                 {
                                     first_name: ans.firstName,
@@ -205,11 +216,11 @@ const addEmployee = () => {
                                 (err, res) => {
                                     if (err) throw err;
                                     start();
-                                })
-                        })
-
+                                }
+                            )
+                        }
+                    )
                 })
-
         })
 }
 const addDepartment = () => {
@@ -218,14 +229,59 @@ const addDepartment = () => {
         type: 'input',
         message: 'What is the name of the new department?'
     })
-    .then(ans => {
-        connection.query('INSERT INTO department SET ?',
-        {
-            name: ans.nDep
-        },
+        .then(ans => {
+            connection.query('INSERT INTO department SET ?',
+                {
+                    name: ans.nDep
+                },
+                (err, res) => {
+                    if (err) throw err;
+                    start();
+                })
+        })
+}
+const addRole = () => {
+    connection.query('SELECT * FROM department',
         (err, res) => {
             if (err) throw err;
-            start();
+            let current = [];
+            res.forEach(i => current.push(i))
+            console.log(current)
+            inquirer.prompt([
+                {
+                    name: 'nTitle',
+                    type: 'input',
+                    message: 'What is the title of this new role?'
+                },
+                {
+                    name: 'nSal',
+                    type: 'number',
+                    message: "What is this new role's salary?"
+                },
+                {
+                    name: 'dep',
+                    type: 'list',
+                    message: 'Which department does this new role belong to?',
+                    choices: current
+                }
+            ])
+                .then(ans => {
+                    let depId;
+                    current.forEach(i => {
+                        if (ans.dep === i.name) {
+                            depId = i.id
+                        }
+                    });
+                    connection.query('INSERT INTO role SET ?',
+                        {
+                            title: ans.nTitle,
+                            salary: ans.nSal,
+                            department_id: depId
+                        },
+                        (err, res) => {
+                            if (err) throw err;
+                            start();
+                        })
+                })
         })
-    })
 }
