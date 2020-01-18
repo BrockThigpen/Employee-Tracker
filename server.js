@@ -48,7 +48,7 @@ const start = () => {
             } else if (choice.main === 'Add Role') {
                 addRole();
             } else if (choice.main === 'Update Employee Roles') {
-
+                updateRole();
             } else if (choice.main === 'Quit') {
                 connection.end();
             }
@@ -208,8 +208,8 @@ const addEmployee = () => {
                             }
                             connection.query('INSERT INTO employee SET ?',
                                 {
-                                    first_name: ans.firstName,
-                                    last_name: ans.lastName,
+                                    first_name: ans.firstName.trim(),
+                                    last_name: ans.lastName.trim(),
                                     role_id: roleId,
                                     manager_id: mgrId
                                 },
@@ -246,7 +246,6 @@ const addRole = () => {
             if (err) throw err;
             let current = [];
             res.forEach(i => current.push(i))
-            console.log(current)
             inquirer.prompt([
                 {
                     name: 'nTitle',
@@ -284,4 +283,67 @@ const addRole = () => {
                         })
                 })
         })
+}
+const updateRole = () => {
+    let employees = [];
+    connection.query('SELECT * FROM employee', (err, res) => {
+        if (err) throw err;
+        res.forEach(i => {
+            let list = i.first_name.concat(' ', i.last_name)
+            employees.push(list);
+        })
+        roleP(employees);
+    })
+    const roleP = employees => {
+        inquirer.prompt(
+            {
+                name: 'uRole',
+                type: 'list',
+                message: 'Which employee would you like to update?',
+                choices: employees
+            })
+            .then(ans => {
+                let picked = ans.uRole.split(' ');
+                let titleArr = [];
+                connection.query('SELECT * FROM role',
+                    (err, res) => {
+                        if (err) throw err;
+                        res.forEach(x => {
+                            let titles = x.title;
+                            titleArr.push(titles);
+                        })
+                        roleU(picked, titleArr, res);
+                    })
+            })
+    }
+    const roleU = (picked, titleArr, roles) => {
+        inquirer.prompt({
+            name: 'nRole',
+            type: 'list',
+            message: "What is this employee's new role?",
+            choices: titleArr
+        })
+            .then(ans => {
+                let roleId;
+                roles.forEach(c => {
+                    if (ans.nRole === c.title) {
+                        roleId = c.id;
+                    }
+                })
+                connection.query('UPDATE employee SET ? WHERE ? AND ?',
+                    [{
+                        role_id: roleId
+                    },
+                    {
+                        first_name: picked[0]
+                    },
+                    {
+                        last_name: picked[1]
+                    }],
+                    (err, res) => {
+                        if (err) throw err;
+                        start();
+                    })
+            })
+    }
 }
