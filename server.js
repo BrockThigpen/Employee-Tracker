@@ -199,7 +199,6 @@ const addEmployee = () => {
                             last_name: mgr[1]
                         }],
                         (err, res) => {
-                            console.log(res);
                             if (err) throw err;
                             if (ans.mgr == 'No Manager') {
                                 mgrId = null;
