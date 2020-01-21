@@ -5,7 +5,8 @@ This application is a employee management system. A user can add departments, ro
 ![alt text](assets/images/demo.gif)
 
 # Dependencies
-
-mysql
-express
-inquirer
+<ul>
+  <li>mysql</li>
+  <li>express</li>
+  <li>inquirer</li>
+</ul>
