@@ -13,7 +13,7 @@ I wWANT to be able to view and manage the departments, roles, and employees in m
 SO THAT I can organize and plan my business
 
 ### <a name="Use"></a>Overview
-This application is a employee management system. A user can add departments, roles, and employees, as well as viewing employees based on their role and department. 
+This application is a employee management system. A user can add departments, roles, and employees, as well as viewing employees based on their role and department. This is a terminal based application so there is no link to a deployed application.
 ![alt text](assets/images/demo.gif)
 
 ### <a name="Tech-Used"></a>Technologies Used
