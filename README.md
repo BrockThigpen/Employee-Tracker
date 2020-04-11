@@ -8,9 +8,9 @@
 - [License](#license)
 
 ### <a name="User-Story"></a>User Story
-AS A business owner
-I wWANT to be able to view and manage the departments, roles, and employees in my company
-SO THAT I can organize and plan my business
+As s business owner
+I want to be able to view and manage the departments, roles, and employees in my company
+So that I can organize and plan my business
 
 ### <a name="Use"></a>Overview
 This application is a employee management system. A user can add departments, roles, and employees, as well as viewing employees based on their role and department. This is a terminal based application so there is no link to a deployed application.
