@@ -8,8 +8,8 @@
 - [License](#license)
 
 ### <a name="User-Story"></a>User Story
-As s business owner
-I want to be able to view and manage the departments, roles, and employees in my company
+As s business owner<Br/>
+I want to be able to view and manage the departments, roles, and employees in my company<br/>
 So that I can organize and plan my business
 
 ### <a name="Use"></a>Overview
